@@ -9,7 +9,7 @@ validateImageAlpha
 validateJpegMini
 
 if [ "directory" == $RUN_MODE ]; then
-  processDirectory
+  handleDirectory
 elif [ "stdin" == $RUN_MODE ]; then
-  processFiles
+  handleStdin
 fi
