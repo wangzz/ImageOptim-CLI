@@ -1,3 +1,7 @@
+# ==============================================================================
+# App Watchers
+# ==============================================================================
+
 # ($1:appName): Get the number of processes in use by an Application
 function countProcesses {
   printf $(ps -aef | grep  "[${1:0:1}]${1:1}.app" | wc -l)

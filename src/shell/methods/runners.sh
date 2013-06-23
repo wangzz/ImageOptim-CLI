@@ -1,18 +1,6 @@
-# (): Get a timestamp for the current time
-function now {
-  date +"%s"
-}
-
-# (): How long did ImageOptim.app take to process the images?
-function getTimeSpent {
-  let timeSpent=endTime-startTime-$isBusyIntervalLength
-  echo $timeSpent
-}
-
-# ($1:dirPath): How many images are in the directory we're about to process?
-function getImgCount {
-  echo $(find -E "$1" -iregex $imageOptimFileTypes | wc -l)
-}
+# ==============================================================================
+# Runners
+# ==============================================================================
 
 # (): run applications against a directory of images
 function processDirectory {

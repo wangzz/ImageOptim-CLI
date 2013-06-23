@@ -1,3 +1,7 @@
+# ==============================================================================
+# Validators
+# ==============================================================================
+
 # (): if an override is not set, get path to this executable
 function initCliPath {
   if [ "false" == $cliPath ]; then

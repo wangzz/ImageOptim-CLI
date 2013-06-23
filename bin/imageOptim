@@ -23,6 +23,10 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# ==============================================================================
+# GLOBALS
+# ==============================================================================
+
 # current version of ImageOptim-CLI from package.json
 version="1.6.8"
 
@@ -65,6 +69,10 @@ jpegMiniAppName="JPEGmini"
 jpegMiniAppFileName="JPEGmini.app"
 
 fileSizes=()
+
+# ==============================================================================
+# App Launchers
+# ==============================================================================
 
 # ($1:appFileName, $2:imageFilePath):
 function addImageToQueue {
@@ -116,6 +124,10 @@ function runJPEGmini {
   `osascript "$cliPath/imageOptimAppleScriptLib" run_jpegmini "$1" $jpegMiniAppName` > /dev/null 2>&1
 }
 
+# ==============================================================================
+# App Watchers
+# ==============================================================================
+
 # ($1:appName): Get the number of processes in use by an Application
 function countProcesses {
   printf $(ps -aef | grep  "[${1:0:1}]${1:1}.app" | wc -l)
@@ -164,6 +176,10 @@ function waitForJPEGmini {
   fi
 }
 
+# ==============================================================================
+# File Sizes
+# ==============================================================================
+
 # ($1:path)
 function sizeInBytes {
   stat -f %z "$1"
@@ -176,6 +192,10 @@ function sizeInBytes {
 function toKb {
   echo $(bc <<< "scale=3; $1/1000")
 }
+
+# ==============================================================================
+# Logging
+# ==============================================================================
 
 # (): Display usage information
 function usage {
@@ -269,6 +289,10 @@ function logFileSizeAfterJpegMini {
   addFileSizeToLog $1 "JPEGmini"
 }
 
+# ==============================================================================
+# Misc Functions
+# ==============================================================================
+
 # ($1:array, $2:filter, $3:iterator)
 function forEachFileOfType {
   declare -a array=("${!1}")
@@ -294,6 +318,10 @@ function getTimeSpent {
 function getImgCount {
   echo $(find -E "$1" -iregex $imageOptimFileTypes | wc -l)
 }
+
+# ==============================================================================
+# Runners
+# ==============================================================================
 
 # (): run applications against a directory of images
 function processDirectory {
@@ -356,9 +384,6 @@ function processFiles {
     forEachFileOfType pipedFiles[@] '.*(bmp|gif|jpeg|jpg|pcx|png|pnm|tga|tiff)' logFileSizeAfterImageOptim
   fi
 
-  # Output
-  # ----------------------------------------------------------------------------
-
   for entry in "${fileSizes[@]}"; do
     local name=$(echo "$entry" | cut -d':' -f 1)
     local appName=$(echo "$entry" | cut -d':' -f 2)
@@ -367,6 +392,10 @@ function processFiles {
   done | sort
 
 }
+
+# ==============================================================================
+# Validators
+# ==============================================================================
 
 # (): if an override is not set, get path to this executable
 function initCliPath {
@@ -457,7 +486,10 @@ function validateJpegMini {
 
 }
 
-# Handle Inputs
+# ==============================================================================
+# Handle CLI Options
+# ==============================================================================
+
 while [ "$1" != "" ]; do
   case $1 in
     -d | --directory )
@@ -492,6 +524,10 @@ while [ "$1" != "" ]; do
   esac
   shift
 done
+
+# ==============================================================================
+# Run
+# ==============================================================================
 
 initCliPath
 validateImgPath
