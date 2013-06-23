@@ -27,26 +27,29 @@ function success {
 
 # ($1:file, $2:logName)
 function addFileSizeToLog {
+  local key=$2
+  local file=$1
   local size=$(sizeInBytes "$1")
-  FILE_SIZES+=("$1:$2:$size")
+  local file=${file//[^a-zA-Z0-9]/x}
+  eval "${key}_${file}=${size}"
 }
 
 # ($1:file)
 function logFileSizeBeforeStarting {
-  addFileSizeToLog $1 "Original"
+  addFileSizeToLog $1 "original"
 }
 
 # ($1:file)
 function logFileSizeAfterImageAlpha {
-  addFileSizeToLog $1 "ImageAlpha"
+  addFileSizeToLog $1 "imagealpha"
 }
 
 # ($1:file)
 function logFileSizeAfterImageOptim {
-  addFileSizeToLog $1 "ImageOptim"
+  addFileSizeToLog $1 "imageoptim"
 }
 
 # ($1:file)
 function logFileSizeAfterJpegMini {
-  addFileSizeToLog $1 "JPEGmini"
+  addFileSizeToLog $1 "jpegmini"
 }
