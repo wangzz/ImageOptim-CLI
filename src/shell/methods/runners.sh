@@ -35,7 +35,9 @@ function processDirectory {
 
 # (): run applications against a single image
 function processFiles {
-  i=0;
+
+  local i=0
+  local fileSizes=()
 
   # store piped input so we can iterate over it more than once
   while read LINE; do
@@ -43,29 +45,69 @@ function processFiles {
     i=$((i+1))
   done
 
+  # ($1:array, $2:filter, $3:iterator)
+  function forEachFileOfType {
+    declare -a array=("${!1}")
+    for file in "${array[@]}"; do
+      if [ "" != "`echo "$file" | grep -E $2`" ]; then
+        $3 "$file"
+      fi
+    done
+  }
+
+  # ($1:file, $2:logName)
+  function addFileSizeToLog {
+    size=$(sizeInBytes "$1")
+    fileSizes+=("$1:$2:$size")
+  }
+
+  # ($1:file)
+  function logFileSizeBeforeStarting {
+    addFileSizeToLog $1 "Original"
+  }
+
+  # ($1:file)
+  function logFileSizeAfterImageAlpha {
+    addFileSizeToLog $1 "ImageAlpha"
+  }
+
+  # ($1:file)
+  function logFileSizeAfterImageOptim {
+    addFileSizeToLog $1 "ImageOptim"
+  }
+
+  # ($1:file)
+  function logFileSizeAfterJpegMini {
+    addFileSizeToLog $1 "JPEGmini"
+  }
+
   echo "Processing $i images..."
 
-  for file in "${pipedFiles[@]}"; do
-    if [ "" != "`echo "$file" | grep -E '{{imageAlphaFileTypes}}'`" ]; then
-      runImageAlphaOnImage "$file"
-    fi
-  done
+  forEachFileOfType pipedFiles[@] '{{imageFileTypes}}' logFileSizeBeforeStarting
 
+  # ImageAlpha
+  forEachFileOfType pipedFiles[@] '{{imageAlphaFileTypes}}' runImageAlphaOnImage
   waitForImageAlpha
+  forEachFileOfType pipedFiles[@] '{{imageAlphaFileTypes}}' logFileSizeAfterImageAlpha
 
-  for file in "${pipedFiles[@]}"; do
-    if [ "" != "`echo "$file" | grep -E '{{jpegMiniFileTypes}}'`" ]; then
-      runJPEGmini "$file"
-    fi
-  done
-
+  # JPEGmini
+  forEachFileOfType pipedFiles[@] '{{jpegMiniFileTypes}}' runJPEGmini
   waitForJPEGmini
+  forEachFileOfType pipedFiles[@] '{{jpegMiniFileTypes}}' logFileSizeAfterJpegMini
 
-  for file in "${pipedFiles[@]}"; do
-    if [ "" != "`echo "$file" | grep -E '{{imageOptimFileTypes}}'`" ]; then
-      runImageOptimOnImage "$file"
-    fi
-  done
-
+  # ImageOptim
+  forEachFileOfType pipedFiles[@] '{{imageOptimFileTypes}}' runImageOptimOnImage
   waitForImageOptim
+  forEachFileOfType pipedFiles[@] '{{imageOptimFileTypes}}' logFileSizeAfterImageOptim
+
+  # Output
+  # ----------------------------------------------------------------------------
+
+  for entry in "${fileSizes[@]}"; do
+    local name=$(echo "$entry" | cut -d':' -f 1)
+    local appName=$(echo "$entry" | cut -d':' -f 2)
+    local size=$(echo "$entry" | cut -d':' -f 3)
+    echo "$name $(toKb $size)kb ($appName)"
+  done | sort
+
 }

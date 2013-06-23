@@ -168,6 +168,19 @@ function waitForJPEGmini {
   fi
 }
 
+# ($1:path)
+function sizeInBytes {
+  stat -f %z "$1"
+}
+
+# ($1:bytes) -> kilobytes
+# Convert a value in bytes to kilobytes to 3 decimal places, so 1b is
+# 0.001kb
+# EXAMPLE: (1500) -> 1.500
+function toKb {
+  echo $(bc <<< "scale=3; $1/1000")
+}
+
 # (): Display usage information
 function usage {
   echo "Usage: imageOptim [options]"
@@ -271,7 +284,9 @@ function processDirectory {
 
 # (): run applications against a single image
 function processFiles {
-  i=0;
+
+  local i=0
+  local fileSizes=()
 
   # store piped input so we can iterate over it more than once
   while read LINE; do
@@ -279,31 +294,71 @@ function processFiles {
     i=$((i+1))
   done
 
+  # ($1:array, $2:filter, $3:iterator)
+  function forEachFileOfType {
+    declare -a array=("${!1}")
+    for file in "${array[@]}"; do
+      if [ "" != "`echo "$file" | grep -E $2`" ]; then
+        $3 "$file"
+      fi
+    done
+  }
+
+  # ($1:file, $2:logName)
+  function addFileSizeToLog {
+    size=$(sizeInBytes "$1")
+    fileSizes+=("$1:$2:$size")
+  }
+
+  # ($1:file)
+  function logFileSizeBeforeStarting {
+    addFileSizeToLog $1 "Original"
+  }
+
+  # ($1:file)
+  function logFileSizeAfterImageAlpha {
+    addFileSizeToLog $1 "ImageAlpha"
+  }
+
+  # ($1:file)
+  function logFileSizeAfterImageOptim {
+    addFileSizeToLog $1 "ImageOptim"
+  }
+
+  # ($1:file)
+  function logFileSizeAfterJpegMini {
+    addFileSizeToLog $1 "JPEGmini"
+  }
+
   echo "Processing $i images..."
 
-  for file in "${pipedFiles[@]}"; do
-    if [ "" != "`echo "$file" | grep -E '.*(png)'`" ]; then
-      runImageAlphaOnImage "$file"
-    fi
-  done
+  forEachFileOfType pipedFiles[@] '.*(bmp|gif|jpeg|jpg|pcx|png|pnm|tga|tiff)' logFileSizeBeforeStarting
 
+  # ImageAlpha
+  forEachFileOfType pipedFiles[@] '.*(png)' runImageAlphaOnImage
   waitForImageAlpha
+  forEachFileOfType pipedFiles[@] '.*(png)' logFileSizeAfterImageAlpha
 
-  for file in "${pipedFiles[@]}"; do
-    if [ "" != "`echo "$file" | grep -E '.*(jpg|jpeg)'`" ]; then
-      runJPEGmini "$file"
-    fi
-  done
-
+  # JPEGmini
+  forEachFileOfType pipedFiles[@] '.*(jpg|jpeg)' runJPEGmini
   waitForJPEGmini
+  forEachFileOfType pipedFiles[@] '.*(jpg|jpeg)' logFileSizeAfterJpegMini
 
-  for file in "${pipedFiles[@]}"; do
-    if [ "" != "`echo "$file" | grep -E '.*(bmp|gif|jpeg|jpg|pcx|png|pnm|tga|tiff)'`" ]; then
-      runImageOptimOnImage "$file"
-    fi
-  done
-
+  # ImageOptim
+  forEachFileOfType pipedFiles[@] '.*(bmp|gif|jpeg|jpg|pcx|png|pnm|tga|tiff)' runImageOptimOnImage
   waitForImageOptim
+  forEachFileOfType pipedFiles[@] '.*(bmp|gif|jpeg|jpg|pcx|png|pnm|tga|tiff)' logFileSizeAfterImageOptim
+
+  # Output
+  # ----------------------------------------------------------------------------
+
+  for entry in "${fileSizes[@]}"; do
+    local name=$(echo "$entry" | cut -d':' -f 1)
+    local appName=$(echo "$entry" | cut -d':' -f 2)
+    local size=$(echo "$entry" | cut -d':' -f 3)
+    echo "$name $(toKb $size)kb ($appName)"
+  done | sort
+
 }
 
 # (): if an override is not set, get path to this executable

@@ -12,6 +12,8 @@
   "invalidDirectoryMsg": "$imgPath is not a directory, or could not be found",
   "invalidFileMsg": "$imgPath is not a file, or could not be found",
 
+  "imageFileTypes": ".*(bmp|gif|jpeg|jpg|pcx|png|pnm|tga|tiff)",
+
   "imageAlphaAppBundleId": "net.pornel.ImageAlpha",
   "imageAlphaAppFileName": "ImageAlpha.app",
   "imageAlphaAppName": "ImageAlpha",
