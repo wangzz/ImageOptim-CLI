@@ -19,11 +19,11 @@ function now {
 
 # (): How long did ImageOptim.app take to process the images?
 function getTimeSpent {
-  let timeSpent=endTime-startTime-$isBusyIntervalLength
+  let timeSpent=endTime-startTime-$WAIT_INTERVAL
   echo $timeSpent
 }
 
 # ($1:dirPath): How many images are in the directory we're about to process?
 function getImgCount {
-  echo $(find -E "$1" -iregex $imageOptimFileTypes | wc -l)
+  echo $(find -E "$1" -iregex $OPTIM_TYPES | wc -l)
 }

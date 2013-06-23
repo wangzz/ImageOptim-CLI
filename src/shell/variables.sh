@@ -3,44 +3,53 @@
 # ==============================================================================
 
 # current version of ImageOptim-CLI from package.json
-version="{{version}}"
+VERSION="{{version}}"
 
-# to be set to "stdin" or "directory" based on cli options or piped input
-runMode="stdin"
+# "stdin"     == find img/*.gif | imageOptim
+# "directory" == imageOptim --directory img/
+RUN_MODE="stdin"
 
-# path to image directory we should optimise
-imgPath="{{imgPath}}"
+# value of --directory when RUN_MODE is "directory"
+DIR_PATH="{{imgPath}}"
 
-# path to this executable
-cliPath="{{cliPath}}"
+# absolute path to this script
+CLI_PATH="{{cliPath}}"
 
-# "true"|"false"
-useImageOptim="{{useImageOptim}}"
-useImageAlpha="{{useImageAlpha}}"
-useJPEGmini="{{useJPEGmini}}"
+# not configurable
+USE_OPTIM="{{useImageOptim}}"
 
-# quit apps after processing images?
-quitOnComplete="{{quitOnComplete}}"
+# enabled by --image-alpha
+USE_ALPHA="{{useImageAlpha}}"
 
-# how long we will wait before checking again if an app is busy
-isBusyIntervalLength={{isBusyIntervalLength}}
+# enabled by --jpeg-mini
+USE_JPEGMINI="{{useJPEGmini}}"
 
-# ImageAlpha
-imageAlphaFileTypes="{{imageAlphaFileTypes}}"
-imageAlphaAppBundleId="{{imageAlphaAppBundleId}}"
-imageAlphaAppName="{{imageAlphaAppName}}"
-imageAlphaAppFileName="{{imageAlphaAppFileName}}"
+# enabled by --quit
+QUIT_AFTER="{{quitOnComplete}}"
 
-# ImageOptim
-imageOptimFileTypes="{{imageOptimFileTypes}}"
-imageOptimAppBundleId="{{imageOptimAppBundleId}}"
-imageOptimAppName="{{imageOptimAppName}}"
-imageOptimAppFileName="{{imageOptimAppFileName}}"
+# how often to poll Pornel's apps to check if finished
+WAIT_INTERVAL={{isBusyIntervalLength}}
 
-# JPEGmini
-jpegMiniFileTypes="{{jpegMiniFileTypes}}"
-jpegMiniAppBundleId="{{jpegMiniAppBundleId}}"
-jpegMiniAppName="{{jpegMiniAppName}}"
-jpegMiniAppFileName="{{jpegMiniAppFileName}}"
+# file types supported by each app
+ALPHA_TYPES="{{imageAlphaFileTypes}}"
+OPTIM_TYPES="{{imageOptimFileTypes}}"
+JPEGMINI_TYPES="{{jpegMiniFileTypes}}"
 
-fileSizes=()
+# bundle ids for each app
+ALPHA_ID="{{imageAlphaAppBundleId}}"
+OPTIM_ID="{{imageOptimAppBundleId}}"
+JPEGMINI_ID="{{jpegMiniAppBundleId}}"
+JPEGMINI_ID_RETAIL="{{jpegMiniAppRetailBundleId}}"
+
+# app process names
+ALPHA_NAME="{{imageAlphaAppName}}"
+OPTIM_NAME="{{imageOptimAppName}}"
+JPEGMINI_NAME="{{jpegMiniAppName}}"
+
+# app .app file names
+ALPHA_FILE="{{imageAlphaAppFileName}}"
+OPTIM_FILE="{{imageOptimAppFileName}}"
+JPEGMINI_FILE="{{jpegMiniAppFileName}}"
+
+# log file sizes before and after each app
+FILE_SIZES=()

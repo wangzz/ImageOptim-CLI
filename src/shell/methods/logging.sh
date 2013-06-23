@@ -28,7 +28,7 @@ function success {
 # ($1:file, $2:logName)
 function addFileSizeToLog {
   local size=$(sizeInBytes "$1")
-  fileSizes+=("$1:$2:$size")
+  FILE_SIZES+=("$1:$2:$size")
 }
 
 # ($1:file)

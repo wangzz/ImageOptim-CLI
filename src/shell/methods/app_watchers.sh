@@ -13,39 +13,39 @@ function waitForApp {
   sleep 2
   # wait until those processes have completed
   while [[ $(countProcesses $1) > "1" ]]; do
-    sleep $isBusyIntervalLength
+    sleep $WAIT_INTERVAL
   done
 }
 
 # ($1:appName):
 function waitForPornelApp {
   waitForApp $1
-  if [ "true" == $quitOnComplete ]; then
+  if [ "true" == $QUIT_AFTER ]; then
     osascript -e "tell application \"$1\" to quit"
   fi
 }
 
 # ():
 function waitForImageOptim {
-  if [ "true" == $useImageOptim ]; then
-    waitForPornelApp $imageOptimAppName
+  if [ "true" == $USE_OPTIM ]; then
+    waitForPornelApp $OPTIM_NAME
   fi
 }
 
 # ():
 function waitForImageAlpha {
-  if [ "true" == $useImageAlpha ]; then
-    waitForPornelApp $imageAlphaAppName
+  if [ "true" == $USE_ALPHA ]; then
+    waitForPornelApp $ALPHA_NAME
   fi
 }
 
 # ():
 function waitForJPEGmini {
-  if [ "true" == $useJPEGmini ]; then
+  if [ "true" == $USE_JPEGMINI ]; then
     sleep 1
-    `osascript "$cliPath/imageOptimAppleScriptLib" wait_for $jpegMiniAppName` > /dev/null 2>&1
-    if [ "true" == $quitOnComplete ]; then
-      osascript -e "tell application \"$jpegMiniAppName\" to quit"
+    `osascript "$CLI_PATH/imageOptimAppleScriptLib" wait_for $JPEGMINI_NAME` > /dev/null 2>&1
+    if [ "true" == $QUIT_AFTER ]; then
+      osascript -e "tell application \"$JPEGMINI_NAME\" to quit"
     fi
   fi
 }

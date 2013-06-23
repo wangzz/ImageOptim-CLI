@@ -9,45 +9,45 @@ function addImageToQueue {
 
 # ($1:fileTypes, $2:appFileName, $3:dirPath): Queue direcory of images
 function addDirectoryToQueue {
-  find -E "$3" -regex $1 -print0 | while IFS= read -r -d $'\0' imgPath; do
-    addImageToQueue $2 "$imgPath"
+  find -E "$3" -regex $1 -print0 | while IFS= read -r -d $'\0' file; do
+    addImageToQueue $2 "$file"
   done
 }
 
-# ($1:appName, $2:fileTypes, $3:appFileName, $4:dirPath):
+# ($1:fileTypes, $2:appFileName, $3:dirPath):
 function runPornelAppOnDirectory {
-  addDirectoryToQueue $2 $3 "$4"
+  addDirectoryToQueue $1 $2 "$3"
 }
 
 # ($1:dirPath):
 function runImageOptimOnDirectory {
-  runPornelAppOnDirectory $imageOptimAppName $imageOptimFileTypes $imageOptimAppFileName "$1"
+  runPornelAppOnDirectory $OPTIM_TYPES $OPTIM_FILE "$1"
 }
 
 # ($1:dirPath):
 function runImageAlphaOnDirectory {
-  runPornelAppOnDirectory $imageAlphaAppName $imageAlphaFileTypes $imageAlphaAppFileName "$1"
+  runPornelAppOnDirectory $ALPHA_TYPES $ALPHA_FILE "$1"
 }
 
-# ($1:appName, $2:fileTypes, $3:appFileName, $4:image):
+# ($1:appFileName, $2:image):
 function runPornelAppOnImage {
-  addImageToQueue $3 "$4"
+  addImageToQueue $1 "$2"
 }
 
 # ($1:image):
 function runImageOptimOnImage {
   echo "{{imageOptimAppName}}: $1"
-  runPornelAppOnImage $imageOptimAppName $imageOptimFileTypes $imageOptimAppFileName "$1"
+  runPornelAppOnImage $OPTIM_FILE "$1"
 }
 
 # ($1:image):
 function runImageAlphaOnImage {
   echo "{{imageAlphaAppName}}: $1"
-  runPornelAppOnImage $imageAlphaAppName $imageAlphaFileTypes $imageAlphaAppFileName "$1"
+  runPornelAppOnImage $ALPHA_FILE "$1"
 }
 
 # ($1:path):
 function runJPEGmini {
   echo "{{jpegMiniAppName}}: $1"
-  `osascript "$cliPath/imageOptimAppleScriptLib" run_jpegmini "$1" $jpegMiniAppName` > /dev/null 2>&1
+  `osascript "$CLI_PATH/imageOptimAppleScriptLib" run_jpegmini "$1" $JPEGMINI_NAME` > /dev/null 2>&1
 }

@@ -5,21 +5,21 @@
 # (): run applications against a directory of images
 function processDirectory {
   startTime=$(now)
-  imgCount=$(getImgCount "$imgPath")
+  imgCount=$(getImgCount "$DIR_PATH")
   echo "Processing $imgCount images..."
 
-  if [ "true" == $useImageAlpha ]; then
-    runImageAlphaOnDirectory "$imgPath"
+  if [ "true" == $USE_ALPHA ]; then
+    runImageAlphaOnDirectory "$DIR_PATH"
     waitForImageAlpha
   fi
 
-  if [ "true" == $useJPEGmini ]; then
-    runJPEGmini "$imgPath"
+  if [ "true" == $USE_JPEGMINI ]; then
+    runJPEGmini "$DIR_PATH"
     waitForJPEGmini
   fi
 
-  if [ "true" == $useImageOptim ]; then
-    runImageOptimOnDirectory "$imgPath"
+  if [ "true" == $USE_OPTIM ]; then
+    runImageOptimOnDirectory "$DIR_PATH"
     waitForImageOptim
   fi
 
@@ -43,27 +43,27 @@ function processFiles {
   forEachFileOfType pipedFiles[@] '{{imageFileTypes}}' logFileSizeBeforeStarting
 
   # ImageAlpha
-  if [ "true" == $useImageAlpha ]; then
+  if [ "true" == $USE_ALPHA ]; then
     forEachFileOfType pipedFiles[@] '{{imageAlphaFileTypes}}' runImageAlphaOnImage
     waitForImageAlpha
     forEachFileOfType pipedFiles[@] '{{imageAlphaFileTypes}}' logFileSizeAfterImageAlpha
   fi
 
   # JPEGmini
-  if [ "true" == $useJPEGmini ]; then
+  if [ "true" == $USE_JPEGMINI ]; then
     forEachFileOfType pipedFiles[@] '{{jpegMiniFileTypes}}' runJPEGmini
     waitForJPEGmini
     forEachFileOfType pipedFiles[@] '{{jpegMiniFileTypes}}' logFileSizeAfterJpegMini
   fi
 
   # ImageOptim
-  if [ "true" == $useImageOptim ]; then
+  if [ "true" == $USE_OPTIM ]; then
     forEachFileOfType pipedFiles[@] '{{imageOptimFileTypes}}' runImageOptimOnImage
     waitForImageOptim
     forEachFileOfType pipedFiles[@] '{{imageOptimFileTypes}}' logFileSizeAfterImageOptim
   fi
 
-  for entry in "${fileSizes[@]}"; do
+  for entry in "${FILE_SIZES[@]}"; do
     local name=$(echo "$entry" | cut -d':' -f 1)
     local appName=$(echo "$entry" | cut -d':' -f 2)
     local size=$(echo "$entry" | cut -d':' -f 3)

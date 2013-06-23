@@ -4,21 +4,21 @@
 
 # (): if an override is not set, get path to this executable
 function initCliPath {
-  if [ "false" == $cliPath ]; then
-    cliPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  if [ "false" == $CLI_PATH ]; then
+    CLI_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
   fi
 }
 
 # (): quit if -d, --directory does not resolve
 function validateImgPath {
-  if [ "directory" == $runMode ] && [ ! -d "$imgPath" ]; then
+  if [ "directory" == $RUN_MODE ] && [ ! -d "$DIR_PATH" ]; then
     error "{{invalidDirectoryMsg}}"
   fi
 }
 
 # ($1:appBundleId): eg. "net.pornel.ImageAlpha" -> "ImageAlpha.app" or "NOT_INSTALLED"
 function getAppFileNameByBundleId {
-  echo `osascript "$cliPath/imageOptimAppleScriptLib" has_app_installed $1`
+  echo `osascript "$CLI_PATH/imageOptimAppleScriptLib" has_app_installed $1`
 }
 
 # ($1:appFileName, $2:appBundleId): -> "true" or "false"
@@ -32,17 +32,17 @@ function appIsInstalled {
 
 # (): -> "true" or "false"
 function imageOptimIsInstalled {
-  echo $(appIsInstalled $imageOptimAppFileName $imageOptimAppBundleId)
+  echo $(appIsInstalled $OPTIM_FILE $OPTIM_ID)
 }
 
 # (): -> "true" or "false"
 function imageAlphaIsInstalled {
-  echo $(appIsInstalled $imageAlphaAppFileName $imageAlphaAppBundleId)
+  echo $(appIsInstalled $ALPHA_FILE $ALPHA_ID)
 }
 
 # (): -> "true" or "false"
 function jpegMiniIsInstalled {
-  if [ "true" == $(appIsInstalled $jpegMiniAppFileName $jpegMiniAppBundleId) ] || [ "true" == $(appIsInstalled $jpegMiniAppFileName $jpegMiniAppRetailBundleId) ]; then
+  if [ "true" == $(appIsInstalled $JPEGMINI_FILE $JPEGMINI_ID) ] || [ "true" == $(appIsInstalled $JPEGMINI_FILE $JPEGMINI_ID_RETAIL) ]; then
     echo "true"
   else
     echo "false"
@@ -51,7 +51,7 @@ function jpegMiniIsInstalled {
 
 # (): -> "true" or "false"
 function guiScriptIsEnabled {
-  echo `osascript "$cliPath/imageOptimAppleScriptLib" has_gui_script`
+  echo `osascript "$CLI_PATH/imageOptimAppleScriptLib" has_gui_script`
 }
 
 # ($1:appShouldBeRun, $2:appIsInstalled, $3:isNotInstalledMsg):
@@ -63,19 +63,19 @@ function errorIfNotInstalled {
 
 # (): quit if ImageOptim should be run but is not installed
 function validateImageOptim {
-  errorIfNotInstalled $useImageOptim $(imageOptimIsInstalled) "{{imageOptimNotInstalledMsg}}"
+  errorIfNotInstalled $USE_OPTIM $(imageOptimIsInstalled) "{{imageOptimNotInstalledMsg}}"
 }
 
 # (): quit if ImageAlpha should be run but is not installed
 function validateImageAlpha {
-  errorIfNotInstalled $useImageAlpha $(imageAlphaIsInstalled) "{{imageAlphaNotInstalledMsg}}"
+  errorIfNotInstalled $USE_ALPHA $(imageAlphaIsInstalled) "{{imageAlphaNotInstalledMsg}}"
 }
 
 # (): quit if ImageAlpha should be run but is not installed or cannot run
 function validateJpegMini {
 
   # if we're not running JPEGmini then it's all good
-  if [ "false" == $useJPEGmini ]; then
+  if [ "false" == $USE_JPEGMINI ]; then
     return 0
   fi
 

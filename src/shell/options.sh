@@ -6,17 +6,17 @@ while [ "$1" != "" ]; do
   case $1 in
     -d | --directory )
       shift;
-      runMode="directory"
-      imgPath=$1
+      RUN_MODE="directory"
+      DIR_PATH=$1
       ;;
     -a | --image-alpha )
-      useImageAlpha="true"
+      USE_ALPHA="true"
       ;;
     -j | --jpeg-mini )
-      useJPEGmini="true"
+      USE_JPEGMINI="true"
       ;;
     -q | --quit )
-      quitOnComplete="true"
+      QUIT_AFTER="true"
       ;;
     -h | --help )
       usage;
@@ -27,7 +27,7 @@ while [ "$1" != "" ]; do
       exit 0
       ;;
     -v | --version )
-      echo $version;
+      echo $VERSION;
       exit 0
       ;;
     * )

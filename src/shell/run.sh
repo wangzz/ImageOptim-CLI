@@ -8,8 +8,8 @@ validateImageOptim
 validateImageAlpha
 validateJpegMini
 
-if [ "directory" == $runMode ]; then
+if [ "directory" == $RUN_MODE ]; then
   processDirectory
-elif [ "stdin" == $runMode ]; then
+elif [ "stdin" == $RUN_MODE ]; then
   processFiles
 fi
