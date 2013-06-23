@@ -43,49 +43,12 @@ function processDirectory {
 function processFiles {
 
   local i=0
-  local fileSizes=()
 
   # store piped input so we can iterate over it more than once
   while read LINE; do
-    pipedFiles[$i]="${LINE}"
+    local pipedFiles[$i]="${LINE}"
     i=$((i+1))
   done
-
-  # ($1:array, $2:filter, $3:iterator)
-  function forEachFileOfType {
-    declare -a array=("${!1}")
-    for file in "${array[@]}"; do
-      if [ "" != "`echo "$file" | grep -E $2`" ]; then
-        $3 "$file"
-      fi
-    done
-  }
-
-  # ($1:file, $2:logName)
-  function addFileSizeToLog {
-    size=$(sizeInBytes "$1")
-    fileSizes+=("$1:$2:$size")
-  }
-
-  # ($1:file)
-  function logFileSizeBeforeStarting {
-    addFileSizeToLog $1 "Original"
-  }
-
-  # ($1:file)
-  function logFileSizeAfterImageAlpha {
-    addFileSizeToLog $1 "ImageAlpha"
-  }
-
-  # ($1:file)
-  function logFileSizeAfterImageOptim {
-    addFileSizeToLog $1 "ImageOptim"
-  }
-
-  # ($1:file)
-  function logFileSizeAfterJpegMini {
-    addFileSizeToLog $1 "JPEGmini"
-  }
 
   echo "Processing $i images..."
 
@@ -111,9 +74,6 @@ function processFiles {
     waitForImageOptim
     forEachFileOfType pipedFiles[@] '{{imageOptimFileTypes}}' logFileSizeAfterImageOptim
   fi
-
-  # Output
-  # ----------------------------------------------------------------------------
 
   for entry in "${fileSizes[@]}"; do
     local name=$(echo "$entry" | cut -d':' -f 1)

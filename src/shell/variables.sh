@@ -38,3 +38,5 @@ jpegMiniFileTypes="{{jpegMiniFileTypes}}"
 jpegMiniAppBundleId="{{jpegMiniAppBundleId}}"
 jpegMiniAppName="{{jpegMiniAppName}}"
 jpegMiniAppFileName="{{jpegMiniAppFileName}}"
+
+fileSizes=()
