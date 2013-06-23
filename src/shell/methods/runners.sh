@@ -20,14 +20,20 @@ function processDirectory {
   imgCount=$(getImgCount "$imgPath")
   echo "Processing $imgCount images..."
 
-  runImageAlphaOnDirectory "$imgPath"
-  waitForImageAlpha
+  if [ "true" == $useImageAlpha ]; then
+    runImageAlphaOnDirectory "$imgPath"
+    waitForImageAlpha
+  fi
 
-  runJPEGmini "$imgPath"
-  waitForJPEGmini
+  if [ "true" == $useJPEGmini ]; then
+    runJPEGmini "$imgPath"
+    waitForJPEGmini
+  fi
 
-  runImageOptimOnDirectory "$imgPath"
-  waitForImageOptim
+  if [ "true" == $useImageOptim ]; then
+    runImageOptimOnDirectory "$imgPath"
+    waitForImageOptim
+  fi
 
   endTime=$(now)
   success "Finished in $(getTimeSpent) seconds" | xargs
@@ -86,19 +92,25 @@ function processFiles {
   forEachFileOfType pipedFiles[@] '{{imageFileTypes}}' logFileSizeBeforeStarting
 
   # ImageAlpha
-  forEachFileOfType pipedFiles[@] '{{imageAlphaFileTypes}}' runImageAlphaOnImage
-  waitForImageAlpha
-  forEachFileOfType pipedFiles[@] '{{imageAlphaFileTypes}}' logFileSizeAfterImageAlpha
+  if [ "true" == $useImageAlpha ]; then
+    forEachFileOfType pipedFiles[@] '{{imageAlphaFileTypes}}' runImageAlphaOnImage
+    waitForImageAlpha
+    forEachFileOfType pipedFiles[@] '{{imageAlphaFileTypes}}' logFileSizeAfterImageAlpha
+  fi
 
   # JPEGmini
-  forEachFileOfType pipedFiles[@] '{{jpegMiniFileTypes}}' runJPEGmini
-  waitForJPEGmini
-  forEachFileOfType pipedFiles[@] '{{jpegMiniFileTypes}}' logFileSizeAfterJpegMini
+  if [ "true" == $useJPEGmini ]; then
+    forEachFileOfType pipedFiles[@] '{{jpegMiniFileTypes}}' runJPEGmini
+    waitForJPEGmini
+    forEachFileOfType pipedFiles[@] '{{jpegMiniFileTypes}}' logFileSizeAfterJpegMini
+  fi
 
   # ImageOptim
-  forEachFileOfType pipedFiles[@] '{{imageOptimFileTypes}}' runImageOptimOnImage
-  waitForImageOptim
-  forEachFileOfType pipedFiles[@] '{{imageOptimFileTypes}}' logFileSizeAfterImageOptim
+  if [ "true" == $useImageOptim ]; then
+    forEachFileOfType pipedFiles[@] '{{imageOptimFileTypes}}' runImageOptimOnImage
+    waitForImageOptim
+    forEachFileOfType pipedFiles[@] '{{imageOptimFileTypes}}' logFileSizeAfterImageOptim
+  fi
 
   # Output
   # ----------------------------------------------------------------------------

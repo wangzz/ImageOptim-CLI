@@ -10,46 +10,40 @@ function addDirectoryToQueue {
   done
 }
 
-# ($1:appShouldBeRun, $2:appName, $3:fileTypes, $4:appFileName, $5:dirPath):
+# ($1:appName, $2:fileTypes, $3:appFileName, $4:dirPath):
 function runPornelAppOnDirectory {
-  if [ "true" == $1 ]; then
-    addDirectoryToQueue $3 $4 "$5"
-  fi
+  addDirectoryToQueue $2 $3 "$4"
 }
 
 # ($1:dirPath):
 function runImageOptimOnDirectory {
-  runPornelAppOnDirectory $useImageOptim $imageOptimAppName $imageOptimFileTypes $imageOptimAppFileName "$1"
+  runPornelAppOnDirectory $imageOptimAppName $imageOptimFileTypes $imageOptimAppFileName "$1"
 }
 
 # ($1:dirPath):
 function runImageAlphaOnDirectory {
-  runPornelAppOnDirectory $useImageAlpha $imageAlphaAppName $imageAlphaFileTypes $imageAlphaAppFileName "$1"
+  runPornelAppOnDirectory $imageAlphaAppName $imageAlphaFileTypes $imageAlphaAppFileName "$1"
 }
 
-# ($1:appShouldBeRun, $2:appName, $3:fileTypes, $4:appFileName, $5:image):
+# ($1:appName, $2:fileTypes, $3:appFileName, $4:image):
 function runPornelAppOnImage {
-  if [ "true" == $1 ]; then
-    addImageToQueue $4 "$5"
-  fi
+  addImageToQueue $3 "$4"
 }
 
 # ($1:image):
 function runImageOptimOnImage {
   echo "{{imageOptimAppName}}: $1"
-  runPornelAppOnImage $useImageOptim $imageOptimAppName $imageOptimFileTypes $imageOptimAppFileName "$1"
+  runPornelAppOnImage $imageOptimAppName $imageOptimFileTypes $imageOptimAppFileName "$1"
 }
 
 # ($1:image):
 function runImageAlphaOnImage {
   echo "{{imageAlphaAppName}}: $1"
-  runPornelAppOnImage $useImageAlpha $imageAlphaAppName $imageAlphaFileTypes $imageAlphaAppFileName "$1"
+  runPornelAppOnImage $imageAlphaAppName $imageAlphaFileTypes $imageAlphaAppFileName "$1"
 }
 
 # ($1:path):
 function runJPEGmini {
-  if [ "true" == $useJPEGmini ]; then
-    echo "{{jpegMiniAppName}}: $1"
-    `osascript "$cliPath/imageOptimAppleScriptLib" run_jpegmini "$1" $jpegMiniAppName` > /dev/null 2>&1
-  fi
+  echo "{{jpegMiniAppName}}: $1"
+  `osascript "$cliPath/imageOptimAppleScriptLib" run_jpegmini "$1" $jpegMiniAppName` > /dev/null 2>&1
 }
