@@ -34,6 +34,7 @@ function handleDirectory {
     echo "$1" | cut -c1-60
   }
 
+  totalSavings=0
   format="%-60s %12s %12s %10s %12s %10s\n"
   printf "$format" "Image" "Before" "ImageAlpha" "JPEGmini" "ImageOptim" "Savings"
 
@@ -50,6 +51,7 @@ function handleDirectory {
     jpegminiSize=${!jpegminiSizeVar}
     imageoptimSize="${!imageoptimSizeVar}"
     savings=$(echo "$originalSize - $imageoptimSize" | bc)
+    totalSavings=$(echo "$totalSavings + $savings" | bc)
 
     savings="$(toKb $savings)kb"
     originalSize="$(toKb $originalSize)kb"
@@ -70,6 +72,8 @@ function handleDirectory {
     printf "$format" $(end "$file") "$originalSize" "$imagealphaSize" "$jpegminiSize" "$imageoptimSize" "$savings"
 
   done
+
+  printf "$format" "Total Savings" "" "" "" "" "$(toKb $totalSavings)kb"
 
   endTime=$(now)
   success "Finished in $(getTimeSpent) seconds" | xargs
