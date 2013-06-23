@@ -338,20 +338,34 @@ function processDirectory {
   imgCount=$(getImgCount "$DIR_PATH")
   echo "Processing $imgCount images..."
 
+  files=( $(find -E "$DIR_PATH" -regex '.*(bmp|gif|jpeg|jpg|pcx|png|pnm|tga|tiff)') )
+
+  forEachFileOfType files[@] '.*(bmp|gif|jpeg|jpg|pcx|png|pnm|tga|tiff)' logFileSizeBeforeStarting
+
   if [ "true" == $USE_ALPHA ]; then
     runImageAlphaOnDirectory "$DIR_PATH"
     waitForImageAlpha
+    forEachFileOfType files[@] '.*(png)' logFileSizeAfterImageAlpha
   fi
 
   if [ "true" == $USE_JPEGMINI ]; then
     runJPEGmini "$DIR_PATH"
     waitForJPEGmini
+    forEachFileOfType files[@] '.*(jpg|jpeg)' logFileSizeAfterJpegMini
   fi
 
   if [ "true" == $USE_OPTIM ]; then
     runImageOptimOnDirectory "$DIR_PATH"
     waitForImageOptim
+    forEachFileOfType files[@] '.*(bmp|gif|jpeg|jpg|pcx|png|pnm|tga|tiff)' logFileSizeAfterImageOptim
   fi
+
+  for entry in "${FILE_SIZES[@]}"; do
+    local name=$(echo "$entry" | cut -d':' -f 1)
+    local appName=$(echo "$entry" | cut -d':' -f 2)
+    local size=$(echo "$entry" | cut -d':' -f 3)
+    echo "$name $(toKb $size)kb ($appName)"
+  done | sort
 
   endTime=$(now)
   success "Finished in $(getTimeSpent) seconds" | xargs
@@ -360,6 +374,7 @@ function processDirectory {
 # (): run applications against a single image
 function processFiles {
 
+  startTime=$(now)
   local i=0
 
   # store piped input so we can iterate over it more than once
@@ -399,6 +414,9 @@ function processFiles {
     local size=$(echo "$entry" | cut -d':' -f 3)
     echo "$name $(toKb $size)kb ($appName)"
   done | sort
+
+  endTime=$(now)
+  success "Finished in $(getTimeSpent) seconds" | xargs
 
 }
 
