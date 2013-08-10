@@ -101,7 +101,7 @@ on run_jpegmini(imgPath, appName)
 
         -- command+shift+g in Finder lets us enter file paths direct
         --keystroke "g" using {command down, shift down}
-         -- shift-cmd-g doesn't work on my machine, or maybe just with JPEGmini Lite
+        -- shift-cmd-g doesn't work on my machine, or maybe just with JPEGmini Lite
         keystroke "/"
         -- window is called JPEGmini even in the Lite app
         set value of text field 1 of sheet 1 of sheet 1 of window "JPEGmini" to imgPath
@@ -133,7 +133,6 @@ on run_jpegmini(imgPath, appName)
 
   end try
 end run_jpegmini
-
 -- Watch app until it's finished working with our folder
 on wait_for(processName)
   tell application "System Events"
