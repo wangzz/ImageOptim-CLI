@@ -372,7 +372,7 @@ function appIsInstalled {
 # full app, lite app and retail app
 # probably don't need the isJPEGMini flag unless getAppFileNameByBundleId is deprecated
 function appIsInstalledNOAS {
-  
+
   isJPEGMini="${2:-false}"
   appPath=$(system_profiler SPApplicationsDataType | grep Applications | grep "$1" | grep Location |  cut -d ":" -f2- | xargs)
 
@@ -406,7 +406,7 @@ function jpegMiniIsInstalled {
 
   retVal=$(appIsInstalledNOAS $jpegMiniAppName "true")
 
-  if [[ "true" == $retVal ]]; then      
+  if [[ "true" == $retVal ]]; then
     echo "true"
   elif [[ "lite" == $retVal ]]; then
     echo "lite"
