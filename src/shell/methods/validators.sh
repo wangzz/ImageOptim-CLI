@@ -101,26 +101,6 @@ function validateImageAlpha {
   errorIfNotInstalled $useImageAlpha $(imageAlphaIsInstalled) "{{imageAlphaNotInstalledMsg}}"
 }
 
-# (): quit if ImageAlpha should be run but is not installed or cannot run
-function validateJpegMini {
-
-  # if we're not running JPEGmini then it's all good
-  if [ "false" == $useJPEGmini ]; then
-    return 0
-  fi
-
-  # if we are and it's not installed
-  if [ "false" == $(jpegMiniIsInstalled) ]; then
-    error "{{jpegMiniNotInstalledMsg}}"
-  fi
-
-  # if we are, it's installed but GUIScript is not available
-  if [ "false" == $(guiScriptIsEnabled) ]; then
-    error "{{guiScriptIsDisabledMsg}}"
-  fi
-
-}
-
 # (): quit if JPEGMini should be run but is not installed or cannot run
 function validateJpegMini {
 
