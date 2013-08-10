@@ -376,15 +376,16 @@ function appIsInstalledNOAS {
   isJPEGMini="${2:-false}"
   appPath=$(system_profiler SPApplicationsDataType | grep Applications | grep "$1" | grep Location |  cut -d ":" -f2- | xargs)
 
+  # fail if we can't find any .app
   if [ ${#appPath} -eq 0 ]; then
     echo "false"
-  else
-    if [ "true" == $isJPEGMini ]; then
-      jpegMiniAppFileName=$(basename "$appPath")
-
-      if [[ "$jpegMiniAppFileName" =~ .*(Lite)\.app$ ]]; then
-        echo "lite"
-      fi
+  # pass if we find a .app and we're not handling JPEGmini
+  elif [ "false" == $isJPEGMini ]; then
+    echo "true"
+  elif [ "true" == $isJPEGMini ]; then
+    jpegMiniAppFileName=$(basename "$appPath")
+    if [[ "$jpegMiniAppFileName" =~ .*(Lite)\.app$ ]]; then
+      echo "lite"
     else
       echo "true"
     fi
@@ -446,6 +447,7 @@ function validateJpegMini {
   fi
 
   retVal=$(jpegMiniIsInstalled)
+
   # if we are and it's not installed
   if [[ "false" == $retVal ]]; then
     error "$jpegMiniAppFileName is not installed (https://itunes.apple.com/us/app/jpegmini/id498944723)"
@@ -456,10 +458,12 @@ function validateJpegMini {
 
       # not sure if you want to do this?
       paid=$(haveTheyPaidForJPEGMini)
+
       if [[ "false" == $paid ]]; then
         error "$jpegMiniAppFileName is not purchased (https://itunes.apple.com/us/app/jpegmini/id498944723)"
       fi
   fi
+
   # if we are, it's installed but GUIScript is not available
   if [ "false" == $(guiScriptIsEnabled) ]; then
     error "To automate JPEGmini we need to enable GUI Scripting, check 'Enable access for assistive devices' under Accessibility in System Preferences, then run ImageOptim-CLI again"
