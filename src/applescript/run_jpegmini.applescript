@@ -23,11 +23,8 @@ on run_jpegmini(imgPath, appName)
         -- let Finder spawn the browse dialog
         delay 1
 
-        -- command+shift+g in Finder lets us enter file paths direct
-        --keystroke "g" using {command down, shift down}
-        -- shift-cmd-g doesn't work on my machine, or maybe just with JPEGmini Lite
+        -- enter path to image/folder (window is called JPEGmini even in the Lite app)
         keystroke "/"
-        -- window is called JPEGmini even in the Lite app
         set value of text field 1 of sheet 1 of sheet 1 of window "JPEGmini" to imgPath
 
         delay 1
