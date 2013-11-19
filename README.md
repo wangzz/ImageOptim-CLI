@@ -1,4 +1,6 @@
-# ImageOptim-CLI
+#图片压缩工具
+
+# ImageOptim-CLI    
 
 Automates [ImageOptim](http://imageoptim.com), [ImageAlpha](http://pngmini.com), and [JPEGmini for Mac](http://jpegmini.com/mac) to make batch optimisation of images part of your automated build process.
 
